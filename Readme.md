@@ -72,33 +72,33 @@ leading terms in its phrase list, it will be passed on to the next filter unmole
 ##Query Parser Plugin
 
 Due to an issue with Lucene/Solr query parsing, the AutoPhrasingTokenFilter is not effective at query time as=
-part of a standard analyzer chain. This is due to the LUCENE-2605 issue in which the query parser sends each token
+part of a standard analyzer chain. This is due to the LUCENE-2605 issue (fixed in 6.2) in which the query parser sends each token
 to the Analyzer individually and it thus cannot "see" across whitespace boundries. To redress this problem, a wrapper
 QParserPlugin is incuded (AutoPhrasingQParserPlugin) that first isolates query syntax (in place), auto phrases and then
 restores the query syntax (+/- operators) so that it functions as originally intended. The auto-phrased portions are
 protected from the query parser by replacing whitespace within them with another character ('_'). 
 
 To use it in a SearchHandler, add a queryParser section to solrconfig.xml:
-
-<pre>
-  &lt;queryParser name="autophrasingParser" class="com.lucidworks.analysis.AutoPhrasingQParserPlugin" >
-      &lt;str name="phrases">autophrases.txt&lt/str>
-  &lt;/queryParser> 
-</pre>
-
+```xml
+  <queryParser name="autophrasingParser" class="com.lucidworks.analysis.AutoPhrasingQParserPlugin" >
+      <str name="phrases">autophrases.txt</str>
+      <str name="replaceWhitespaceWith">_</str>
+  </queryParser>
+```
 And a new search handler that uses the query parser:
-
-<pre>
-  &lt;requestHandler name="/autophrase" class="solr.SearchHandler">
-   &lt;lst name="defaults">
-     &lt;str name="echoParams">explicit&lt;/str>
-     &lt;int name="rows">10&lt;/int>
-     &lt;str name="df">text&lt;/str>
-     &lt;str name="defType">autophrasingParser&lt;/str>
-   &lt;/lst>
-  &lt;/requestHandler>
-</pre>
-
+```xml
+<requestHandler name="/autophrase" class="solr.SearchHandler">
+   <lst name="defaults">
+     <str name="echoParams">explicit</str>
+     <int name="rows">10</int>
+     <str name="df">text</str>
+     <str name="defType">autophrasingParser</str>
+   </lst>
+   <lst name="invariants">
+     <str name="defType">autophrasingParser</str>
+   </lst>
+  </requestHandler>
+```
 ##Example Test Code:
 
 The following Java code can be used to show what the AutoPhrasingTokenFilter does:
