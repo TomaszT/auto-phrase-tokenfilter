@@ -117,7 +117,7 @@ fan belt
 front seat
 heated seat
 keyless entry
-keyless ignition
+keyless start
 electronic ignition
 ```
 In synonyms.txt it is now possible to add multi-term synonyms, like so:
@@ -125,13 +125,13 @@ In synonyms.txt it is now possible to add multi-term synonyms, like so:
 ...
 
 # mutli-term synonyms
-keyless_ignition,electronic_ignition
+keyless_start,electronic_ignition
 ```
 Important things to note are: 
 * multi-term synonyms must be also defined in the autophrases.txt file
 * instead of space characted, they should use *replaceWhitespaceWith* character defined in field type configuration (underscore in our case)
 
-To do the test we will also need some example data file:
+To do the test we will also need some example data file, testdoc.xml:
 ```xml
 <add>
   <doc>
@@ -169,54 +169,6 @@ It doesn't have a timing belt.</field>
 </add>
 ```
 
-The following Java code can be used to show what the AutoPhrasingTokenFilter does:
-
-<pre>
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.BaseTokenStreamTestCase;
-import org.apache.lucene.analysis.util.CharArraySet;
-
-...
-
-  public void testAutoPhrase( ) throws Exception {
-    // sets up a list of phrases - Normally this would be supplied by AutoPhrasingTokenFilterFactory
-    final CharArraySet phraseSets = new CharArraySet(TEST_VERSION_CURRENT, Arrays.asList(
-        "income tax", "tax refund", "property tax"
-        ), false);
-
-    final String input = "what is my income tax refund this year now that my property tax is so high";
-    WhitespaceTokenizer wt = new WhitespaceTokenizer(TEST_VERSION_CURRENT, new StringReader(input));
-    AutoPhrasingTokenFilter aptf = new AutoPhrasingTokenFilter( TEST_VERSION_CURRENT, wt, phraseSets, false );
-    CharTermAttribute term = aptf.addAttribute(CharTermAttribute.class);
-    aptf.reset();
-
-    boolean hasToken = false;
-    do {
-      hasToken = aptf.incrementToken( );
-      if (hasToken) System.out.println( "token:'" + term.toString( ) + "'" );
-    } while (hasToken);
-  }
-</pre>
-
-This produces the following output:
-
-<pre>
-token:'what'
-token:'is'
-token:'my'
-token:'income tax'
-token:'tax refund'
-token:'this'
-token:'year'
-token:'now'
-token:'that'
-token:'my'
-token:'property tax'
-token:'is'
-token:'so'
-token:'high'
-</pre>
 
 ##Deployment Procedure:
 
