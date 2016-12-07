@@ -297,18 +297,59 @@ returns:
 The same query with /select handler will return empty set, because there is no documents with terms keyless or start.
 
 ##Deployment Procedure (locally deployed Solr)
+Getting Solr 4.10.3-cdh5.5.4:
 ```sh
 wget http://archive.cloudera.com/cdh5/cdh/5/solr-4.10.3-cdh5.5.4.tar.gz
 tar -xzvf solr-4.10.3-cdh5.5.4.tar.gz
 cd solr-4.10.3-cdh5.5.4/example
 export MY_SOLR_HOME=`pwd`
 ```
-
-
-These files should be placed in $MY_SOLR_HOME/solr/collection/conf dir, in my case it was ...solr-4.10.3-cdh5.5.4/example/solr/collection1/conf
-
-To build the autophrasing token filter from source code you will need to install Apache Ant (http://ant.apache.org/bindownload.cgi). Install Ant and then in a linux/unix shell or Windows DOS command window, change to the auto-phrase-tokenfilter directory (i.e. where you downloaded this project to) and type: ant
-
-Assuming that everything went well( BUILD SUCCESSFUL message from Ant), you will have a Java archive file called auto-phrase-tokenfilter-1.0.jar in the auto-phrase-tokenfilter/dist subdirectory. Copy this file to [solr-home]/lib (you may have to create the /lib folder first). In a typical Solr 4.x install, [solr-home] would be at /example/solr. Then restart Solr.
-
+Building and deploying this project:
+```sh
+mvn clean package
+mkdir $MY_SOLR_HOME/solr/lib
+cp target/auto-phrase-tokenfilter-1.0-SNAPSHOT.jar $MY_SOLR_HOME/lib/
+```
+Modify $MY_SOLR_HOME/solr/collection1/conf/schema.xml and solrconfig.xml according to examples described ealier.
+Place/edit synonyms.txt and autophrases.txt files in $MY_SOLR_HOME/solr/collection/conf dir.
+Start Solr:
+```sh
+cd $MY_SOLR_HOME
+java -jar start.jar
+```
+Delete all the document currently indexed in the collection1:
+```sh
+curl http://localhost:8983/solr/collection1/update?commit=true -H "Contenty-Type: text/xml" --data-binary '<delete><query>*:*</query></delete>'
+```
+and index example data file testdoc.xml described ealier.
+```sh
+curl "http://localhost:8983/solr/collection1/update?stream.file=/home/pancho/testdoc.xml&stream.contentType=text/xml;charset=utf-8&commit=true"
+```
+Make a test:
+```sh
+curl "http://localhost:8983/solr/collection1/autophrase?q=keyless+start" | xmllint --format -
+```
+returns:
+```xml
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">13</int>
+    <lst name="params">
+      <str name="q">keyless start</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="1" start="0">
+    <doc>
+      <str name="id">6</str>
+      <str name="name">Doc 6</str>
+      <arr name="text">
+        <str>Doc 6</str>
+        <str>This one has electronic ignition</str>
+      </arr>
+      <long name="_version_">1553061204075741184</long>
+    </doc>
+  </result>
+</response>
+```
 The code included in this distribution was compiled with Solr 4.10.3-cdh5.5.4
