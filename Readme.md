@@ -296,9 +296,16 @@ returns:
 ```
 The same query with /select handler will return empty set, because there is no documents with terms keyless or start.
 
-##Deployment Procedure:
+##Deployment Procedure (locally deployed Solr)
+```sh
+wget http://archive.cloudera.com/cdh5/cdh/5/solr-4.10.3-cdh5.5.4.tar.gz
+tar -xzvf solr-4.10.3-cdh5.5.4.tar.gz
+cd solr-4.10.3-cdh5.5.4/example
+export MY_SOLR_HOME=`pwd`
+```
 
-These files should be placed in SOLR_HOME/collection/conf dir, in my case it was ...solr-4.10.3-cdh5.5.4/example/solr/collection1/conf
+
+These files should be placed in $MY_SOLR_HOME/solr/collection/conf dir, in my case it was ...solr-4.10.3-cdh5.5.4/example/solr/collection1/conf
 
 To build the autophrasing token filter from source code you will need to install Apache Ant (http://ant.apache.org/bindownload.cgi). Install Ant and then in a linux/unix shell or Windows DOS command window, change to the auto-phrase-tokenfilter directory (i.e. where you downloaded this project to) and type: ant
 
