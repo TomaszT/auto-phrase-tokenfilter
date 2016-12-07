@@ -132,7 +132,42 @@ Important things to note are:
 * instead of space characted, they should use *replaceWhitespaceWith* character defined in field type configuration (underscore in our case)
 
 To do the test we will also need some example data file:
-
+```xml
+<add>
+  <doc>
+    <field name="id">1</field>
+    <field name="name">Doc 1</field>
+    <field name="text">This has a rear window defroster and really cool bucket seats.</field>
+  </doc>
+  <doc>
+    <field name="id">2</field>
+    <field name="name">Doc 2</field>
+    <field name="text">This one has rear seat cushions and air conditioning – what a ride!</field>
+  </doc>
+  <doc>
+    <field name="id">3</field>
+    <field name="name">Doc 3</field>
+    <field name="text">This one has gold seat belts front and rear.</field>
+  </doc>
+  <doc>
+    <field name="id">4</field>
+    <field name="name">Doc 4</field>
+    <field name="text">This one has front and side air bags and a heated seat.
+The fan belt never breaks.</field>
+  </doc>
+    <doc>
+    <field name="id">5</field>
+    <field name="name">Doc 5</field>
+    <field name="text">This one has big rear wheels and a seat cushion.
+It doesn't have a timing belt.</field>
+  </doc>
+ <doc>
+    <field name="id">6</field>
+    <field name="name">Doc 6</field>
+    <field name="text">This one has electronic ignition</field>
+  </doc>
+</add>
+```
 
 The following Java code can be used to show what the AutoPhrasingTokenFilter does:
 
