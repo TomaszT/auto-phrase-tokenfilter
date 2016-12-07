@@ -2,7 +2,7 @@ auto-phrase-tokenfilter
 =======================
 
 Lucene Auto Phrase TokenFilter implementation (forked from: https://github.com/LucidWorks/auto-phrase-tokenfilter)
-
+Solution below is based on following article: https://lucidworks.com/blog/2014/07/12/solution-for-multi-term-synonyms-in-lucenesolr-using-the-auto-phrasing-tokenfilter/
 
 Performs "auto phrasing" on a token stream. Auto phrases refer to sequences of tokens that
 are meant to describe a single thing and should be searched for as such. When these phrases
