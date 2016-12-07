@@ -99,7 +99,7 @@ And a new search handler that uses the query parser:
    </lst>
   </requestHandler>
 ```
-##Example :
+##Example of search for multi-term phrases 
 
 To see autophrasing tokenfilter in action, we need to create two additional files: autophrases.txt(new file) and synonyms.txt (probably already existing). Autophrases.txt contains list of example phrases:
 ```txt
@@ -261,6 +261,40 @@ returns only one result:
   </result>
 </response>
 ```
+
+##Example of search for multi-term synonyms
+Previously we've defined following synonym group:
+```txt
+keyless_start,electronic_ignition
+```
+So, we should be able to search for *keyless start* and find document with phrase *electronic ignition*
+```sh
+curl "http://localhost:8983/solr/collection1/autophrase?q=keyless+start" | xmllint --format -
+```
+returns:
+```xml
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">13</int>
+    <lst name="params">
+      <str name="q">keyless start</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="1" start="0">
+    <doc>
+      <str name="id">6</str>
+      <str name="name">Doc 6</str>
+      <arr name="text">
+        <str>Doc 6</str>
+        <str>This one has electronic ignition</str>
+      </arr>
+      <long name="_version_">1553061204075741184</long>
+    </doc>
+  </result>
+</response>
+```
+The same query with /select handler will return empty set, because there is no documents with terms keyless or start.
 
 ##Deployment Procedure:
 
