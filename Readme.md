@@ -100,6 +100,7 @@ And a new search handler that uses the query parser:
   </requestHandler>
 ```
 ##Example :
+
 To see autophrasing tokenfilter in action, we need to create two additional files: autophrases.txt(new file) and synonyms.txt (probably already existing). Autophrases.txt contains list of example phrases:
 ```txt
 air filter
@@ -168,9 +169,102 @@ It doesn't have a timing belt.</field>
   </doc>
 </add>
 ```
-
+Trying the multi-term synonym *seat cushions*, using the standard select handler:
+```sh
+curl "http://localhost:8983/solr/collection1/select?q=seat+cushions" | xmllint --format -
+```
+doesn't recognize *seat cushions* phrase and returns 5 results:
+```xml
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">2</int>
+    <lst name="params">
+      <str name="q">seat cushions</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="5" start="0">
+    <doc>
+      <str name="id">2</str>
+      <str name="name">Doc 2</str>
+      <arr name="text">
+        <str>Doc 2</str>
+        <str>This one has rear seat cushions and air conditioning – what a ride!</str>
+      </arr>
+      <long name="_version_">1553061204035895296</long>
+    </doc>
+    <doc>
+      <str name="id">5</str>
+      <str name="name">Doc 5</str>
+      <arr name="text">
+        <str>Doc 5</str>
+        <str>This one has big rear wheels and a seat cushion.
+It doesn't have a timing belt.</str>
+      </arr>
+      <long name="_version_">1553061204065255424</long>
+    </doc>
+    <doc>
+      <str name="id">1</str>
+      <str name="name">Doc 1</str>
+      <arr name="text">
+        <str>Doc 1</str>
+        <str>This has a rear window defroster and really cool bucket seats.</str>
+      </arr>
+      <long name="_version_">1553061203988709376</long>
+    </doc>
+    <doc>
+      <str name="id">3</str>
+      <str name="name">Doc 3</str>
+      <arr name="text">
+        <str>Doc 3</str>
+        <str>This one has gold seat belts front and rear.</str>
+      </arr>
+      <long name="_version_">1553061204047429632</long>
+    </doc>
+    <doc>
+      <str name="id">4</str>
+      <str name="name">Doc 4</str>
+      <arr name="text">
+        <str>Doc 4</str>
+        <str>This one has front and side air bags and a heated seat.
+The fan belt never breaks.</str>
+      </arr>
+      <long name="_version_">1553061204054769664</long>
+    </doc>
+  </result>
+</response>
+```
+The same query using autophrase handler:
+```sh
+curl "http://localhost:8983/solr/collection1/autophrase?q=seat+cushions" | xmllint --format -
+```
+returns only one result:
+```xml
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">15</int>
+    <lst name="params">
+      <str name="q">seat cushions</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="1" start="0">
+    <doc>
+      <str name="id">2</str>
+      <str name="name">Doc 2</str>
+      <arr name="text">
+        <str>Doc 2</str>
+        <str>This one has rear seat cushions and air conditioning – what a ride!</str>
+      </arr>
+      <long name="_version_">1553061204035895296</long>
+    </doc>
+  </result>
+</response>
+```
 
 ##Deployment Procedure:
+
+These files should be placed in SOLR_HOME/collection/conf dir, in my case it was ...solr-4.10.3-cdh5.5.4/example/solr/collection1/conf
 
 To build the autophrasing token filter from source code you will need to install Apache Ant (http://ant.apache.org/bindownload.cgi). Install Ant and then in a linux/unix shell or Windows DOS command window, change to the auto-phrase-tokenfilter directory (i.e. where you downloaded this project to) and type: ant
 
