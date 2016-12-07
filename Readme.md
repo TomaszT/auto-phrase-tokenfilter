@@ -99,7 +99,40 @@ And a new search handler that uses the query parser:
    </lst>
   </requestHandler>
 ```
-##Example Test Code:
+##Example :
+To see autophrasing tokenfilter in action, we need to create two additional files: autophrases.txt(new file) and synonyms.txt (probably already existing). Autophrases.txt contains list of example phrases:
+```txt
+air filter
+air bag
+air conditioning
+rear window
+rear seat
+rear spoiler
+rear tow bar
+seat belts
+seat cushions
+bucket seat
+timing belt
+fan belt
+front seat
+heated seat
+keyless entry
+keyless ignition
+electronic ignition
+```
+In synonyms.txt it is now possible to add multi-term synonyms, like so:
+```txt
+...
+
+# mutli-term synonyms
+keyless_ignition,electronic_ignition
+```
+Important things to note are: 
+* multi-term synonyms must be also defined in the autophrases.txt file
+* instead of space characted, they should use *replaceWhitespaceWith* character defined in field type configuration (underscore in our case)
+
+To do the test we will also need some example data file:
+
 
 The following Java code can be used to show what the AutoPhrasingTokenFilter does:
 
